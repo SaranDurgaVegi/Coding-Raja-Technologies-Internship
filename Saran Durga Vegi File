@@ -1,0 +1,55 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import random
+import string
+
+# Step 1: Data Collection (Sample Conversations)
+# Sample conversation data
+conversations = [
+    ("What is your name?", "My name is Chatbot."),
+    ("How are you?", "I am doing well, thank you!"),
+    ("Can you help me?", "Sure, I'd be happy to help."),
+    ("Goodbye", "Goodbye! Have a great day!"),
+]
+
+# Step 2: Text Pre-processing
+def preprocess_text(text):
+    text = text.lower()  # Convert to lowercase
+    tokens = word_tokenize(text)  # Tokenization
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word not in stop_words]  # Remove stopwords
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]  # Lemmatization
+    return ' '.join(tokens)
+
+# Step 3: Intent Recognition
+def get_intent(user_input):
+    for intent, response in conversations:
+        if user_input == intent:
+            return response
+    return "Sorry, I don't understand that."
+
+# Step 4: Response Generation
+def generate_response(user_input):
+    preprocessed_input = preprocess_text(user_input)
+    intent_response = get_intent(preprocessed_input)
+    return intent_response
+
+# User Interaction
+def chat():
+    print("Welcome to the Chatbot!")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'quit':
+            print("Goodbye!")
+            break
+        response = generate_response(user_input)
+        print("Chatbot:", response)
+
+if __name__ == "__main__":
+    chat()
